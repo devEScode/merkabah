@@ -312,8 +312,16 @@ ul, ol { list-style: none; padding: 0; }
 .tabs button { height: 44px; padding: 0 8px; border: 0; border-radius: 999px; font: inherit; font-size: 15px; cursor: pointer; background: transparent; color: var(--green); transition: background .3s, color .3s; }
 .tabs [aria-selected="true"] { background: var(--green); color: var(--cream); }
 .price-rooms { margin: 14px 4px 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
-.price-rows { margin-top: 8px; padding: 0 4px; }
-.price-rows li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--field); }
+.price-hint { margin: 4px 4px 0; font-size: 13px; color: var(--muted); }
+.price-rows { margin: 8px -6px 0; }
+.price-rows li { border-bottom: 1px solid var(--field); }
+.price-rows button {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: 4px 0; padding: 10px; border: 0; border-radius: 12px; background: transparent;
+  font: inherit; color: inherit; text-align: left; cursor: pointer; transition: background .2s;
+}
+.price-rows button:hover { background: rgba(231, 236, 225, .6); }
+.price-rows button[aria-pressed="true"] { background: var(--sage-2); box-shadow: inset 0 0 0 1.5px var(--moss); }
 .price-rows .lbl { display: flex; flex-direction: column; gap: 2px; font-size: 16px; }
 .price-rows .note { font-size: 13px; color: var(--muted); }
 .price-rows .serif { font-size: 28px; color: var(--green); white-space: nowrap; }
@@ -354,7 +362,7 @@ ul, ol { list-style: none; padding: 0; }
 .hours div:first-child dd { color: var(--green); font-weight: 500; }
 .hours div:last-child dd { color: var(--body); }
 
-.book { background: var(--forest); color: var(--cream); border-radius: 24px; padding: 26px 20px; }
+.book { background: var(--forest); color: var(--cream); border-radius: 24px; padding: 26px 20px; scroll-margin-top: 80px; /* barra fixa do topo (64px) + folga */ }
 .book h3 { margin-top: 12px; font-size: 36px; line-height: 1.02; }
 .book-lead { margin-top: 10px; font-size: 15px; line-height: 1.6; color: var(--on-dark-2); }
 .form2 { margin: 20px 0 18px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
@@ -563,8 +571,9 @@ ul, ol { list-style: none; padding: 0; }
   .tabs button { padding: 0 20px; }
   .price-rooms { margin: 18px 0 0; font-size: 15px; }
   .price-grid { margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: start; }
-  .price-rows { margin: 0; padding: 0; }
-  .price-rows li { align-items: baseline; gap: 16px; padding: 18px 0; }
+  .price-hint { margin: 4px 0 0; }
+  .price-rows { margin: 0 -14px; }
+  .price-rows button { align-items: baseline; gap: 16px; padding: 14px; }
   .price-rows .lbl { flex-direction: row; align-items: baseline; justify-content: space-between; flex-grow: 1; gap: 14px; font-size: 17px; }
   .price-rows .serif { font-size: 30px; }
   .price-side { margin: 0; }
@@ -591,7 +600,7 @@ ul, ol { list-style: none; padding: 0; }
   .maps { margin-top: 18px; display: inline-flex; height: auto; border: 0; border-radius: 0; text-decoration: underline; }
   .hours { margin-top: 24px; font-size: 16px; }
   .hours div { padding: 16px 0; }
-  .book { border-radius: 28px; padding: 44px; }
+  .book { border-radius: 28px; padding: 44px; scroll-margin-top: 32px; }
   .book .eyebrow { font-size: 13px; }
   .book h3 { margin-top: 14px; font-size: 46px; }
   .book-lead { margin-top: 14px; }

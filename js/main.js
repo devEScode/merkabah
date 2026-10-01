@@ -36,17 +36,20 @@
   ];
 
   var VALIDITY = 'Validade dos pacotes: 5h = 45 dias · 10h = 90 dias · 20h = 150 dias.';
+  // Linhas: [rótulo, preço, preço/hora, opção correspondente no campo "Formato" da reserva]
+  var H1 = 'Hora avulsa', P5 = 'Pacote de 5 horas', P10 = 'Pacote de 10 horas', P20 = 'Pacote de 20 horas';
+  var MEIO = 'Meio período (5h seguidas)', DIA = 'Diária (10h seguidas)';
   var PLANS = {
-    amp: { rooms: 'Salas Jardim de Inverno, Egípcia e Buda', gift: true, validity: VALIDITY, rows: [
-      ['1 hora', 'R$ 65', ''], ['Pacote 5 horas', 'R$ 300', 'R$ 60/h'], ['Pacote 10 horas', 'R$ 550', 'R$ 55/h'],
-      ['Pacote 20 horas', 'R$ 900', 'R$ 45/h'], ['Meio período (5h seguidas)', 'R$ 220', 'R$ 44/h'], ['Diária (10h seguidas)', 'R$ 350', 'R$ 35/h']
+    amp: { rooms: 'Salas Jardim de Inverno, Egípcia e Buda', roomList: ['Jardim de Inverno', 'Egípcia', 'Buda'], gift: true, validity: VALIDITY, rows: [
+      ['1 hora', 'R$ 65', '', H1], ['Pacote 5 horas', 'R$ 300', 'R$ 60/h', P5], ['Pacote 10 horas', 'R$ 550', 'R$ 55/h', P10],
+      ['Pacote 20 horas', 'R$ 900', 'R$ 45/h', P20], [MEIO, 'R$ 220', 'R$ 44/h', MEIO], [DIA, 'R$ 350', 'R$ 35/h', DIA]
     ] },
-    pad: { rooms: 'Salas Jardim Vertical, Alemã, Africana e Estética', gift: false, validity: VALIDITY, rows: [
-      ['1 hora', 'R$ 45', ''], ['Pacote 5 horas', 'R$ 200', 'R$ 40/h'], ['Pacote 10 horas', 'R$ 350', 'R$ 35/h'],
-      ['Pacote 20 horas', 'R$ 600', 'R$ 30/h'], ['Meio período (5h seguidas)', 'R$ 150', 'R$ 30/h'], ['Diária (10h seguidas)', 'R$ 250', 'R$ 25/h']
+    pad: { rooms: 'Salas Jardim Vertical, Alemã, Africana e Estética', roomList: ['Jardim Vertical', 'Alemã', 'Africana', 'Estética'], gift: false, validity: VALIDITY, rows: [
+      ['1 hora', 'R$ 45', '', H1], ['Pacote 5 horas', 'R$ 200', 'R$ 40/h', P5], ['Pacote 10 horas', 'R$ 350', 'R$ 35/h', P10],
+      ['Pacote 20 horas', 'R$ 600', 'R$ 30/h', P20], [MEIO, 'R$ 150', 'R$ 30/h', MEIO], [DIA, 'R$ 250', 'R$ 25/h', DIA]
     ] },
-    cur: { rooms: 'Sala de Curso — cadeiras, TV, bebedouro, café e chá', gift: false, validity: 'Turno fixo semanal e outros formatos: consulte condições pelo WhatsApp.', rows: [
-      ['1 hora', 'R$ 65', ''], ['Pacote 5 horas', 'R$ 300', 'R$ 60/h'], ['Pacote 10 horas', 'R$ 500', 'R$ 50/h']
+    cur: { rooms: 'Sala de Curso — cadeiras, TV, bebedouro, café e chá', roomList: ['Sala de Curso'], gift: false, validity: 'Turno fixo semanal e outros formatos: consulte condições pelo WhatsApp.', rows: [
+      ['1 hora', 'R$ 65', '', H1], ['Pacote 5 horas', 'R$ 300', 'R$ 60/h', P5], ['Pacote 10 horas', 'R$ 500', 'R$ 50/h', P10]
     ] }
   };
 
@@ -179,17 +182,28 @@
 
   // ---------------------------------------------------------------- tabela de valores
   var tabs = document.querySelectorAll('[data-tab]');
+  var plan = { key: 'amp', row: 0 };
+  function setRow(i) {
+    plan.row = i;
+    $('plan-rows').querySelectorAll('button').forEach(function (b, k) { b.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+  }
   function setPlan(key) {
     var p = PLANS[key];
+    plan.key = key;
     tabs.forEach(function (t) { t.setAttribute('aria-selected', t.dataset.tab === key ? 'true' : 'false'); });
     $('plan-rooms').textContent = p.rooms;
-    $('plan-rows').innerHTML = p.rows.map(function (r) {
-      return '<li><span class="lbl"><span>' + r[0] + '</span><span class="note">' + r[2] + '</span></span><span class="serif">' + r[1] + '</span></li>';
+    $('plan-rows').innerHTML = p.rows.map(function (r, i) {
+      return '<li><button type="button" data-row="' + i + '"><span class="lbl"><span>' + r[0] + '</span><span class="note">' + r[2] + '</span></span><span class="serif">' + r[1] + '</span></button></li>';
     }).join('');
     $('plan-gift').hidden = !p.gift;
     $('plan-validity').textContent = p.validity;
+    setRow(0);
   }
   tabs.forEach(function (t) { t.addEventListener('click', function () { setPlan(t.dataset.tab); }); });
+  $('plan-rows').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-row]');
+    if (b) setRow(+b.dataset.row);
+  });
   setPlan('amp');
 
   // ---------------------------------------------------------------- reserva via WhatsApp
@@ -202,6 +216,16 @@
   form.addEventListener('input', updateWa);
   form.addEventListener('submit', function (e) { e.preventDefault(); $('wa-send').click(); });
   updateWa();
+
+  // "Reservar este formato": leva a opção escolhida na tabela para o formulário.
+  // A sala só é trocada se a atual não pertence ao tipo escolhido.
+  $('plan-book').addEventListener('click', function () {
+    var p = PLANS[plan.key];
+    var room = form.elements.room;
+    if (p.roomList.indexOf(room.value) < 0) room.value = p.roomList.length === 1 ? p.roomList[0] : 'Ainda não sei';
+    form.elements.kind.value = p.rows[plan.row][3];
+    updateWa();
+  });
 
   // ---------------------------------------------------------------- palavras cinéticas
   function setWord(w) {
