@@ -260,7 +260,7 @@ ul, ol { list-style: none; padding: 0; }
 .tagline { margin-top: 40px; text-align: center; font-size: 26px; line-height: 1.25; font-style: italic; color: var(--moss); }
 
 /* ================= KINETIC ================= */
-.kw { position: relative; height: 200vh; }
+.kw { position: relative; height: 250vh; } /* palco fixo percorre 1,5 tela (ver main.js) */
 .kw-stage {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
   background-color: var(--moss); transition: background-color .9s ease;
@@ -382,7 +382,9 @@ ul, ol { list-style: none; padding: 0; }
 .footer { overflow: hidden; padding: 48px var(--pad) 0; }
 .wordmark {
   font-size: 22vw; line-height: .95; letter-spacing: -.03em; padding-bottom: .08em;
-  background: url(../img/jardim-vertical.jpg) center 50% / cover;
+  background: url(../img/capim.jpg) center 75% / cover; /* Unsplash QhhRXN-gR1c (capim na hora dourada) */
+  /* trecho vertical da foto percorrido no scroll (main.js): fica no capim, longe do sol estourado do topo */
+  --wm-from: 75; --wm-to: 55;
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .foot-top { margin-top: 28px; display: flex; flex-direction: column; gap: 32px; }

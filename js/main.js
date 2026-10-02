@@ -253,6 +253,7 @@
   var hero = $('hero');
   var actionbar = $('actionbar');
   var pinT = 0;
+  var wmFrom = 85, wmTo = 15;
 
   function measure() {
     var vh = window.innerHeight;
@@ -270,6 +271,9 @@
       roomsWrap.style.height = '';
       row.style.transform = '';
     }
+    var cs = getComputedStyle(wordmark);
+    wmFrom = parseFloat(cs.getPropertyValue('--wm-from')) || 85;
+    wmTo = parseFloat(cs.getPropertyValue('--wm-to')) || 15;
     reveals.forEach(function (n) { n.style.setProperty('--e', 1); });
     var y = window.scrollY;
     tops = reveals.map(function (n) { return n.getBoundingClientRect().top + y; });
@@ -280,13 +284,22 @@
     var vh = window.innerHeight;
     var y = window.scrollY;
     var anim = motion();
+    var maxY = document.documentElement.scrollHeight - vh;
+
+    // progresso 0→1 de um elemento com topo `top` (no documento). A animação vai
+    // de y0 até y0 + vh*sp, mas nunca termina depois do fim da página — senão o
+    // que fica perto do rodapé nunca chega a 100% (ficava apagado).
+    var prog = function (top, s, sp, o) {
+      var y0 = top - vh * s + vh * sp * o;
+      var y1 = Math.min(y0 + vh * sp, maxY);
+      return y1 - y0 < 1 ? (y >= y1 ? 1 : 0) : clamp((y - y0) / (y1 - y0));
+    };
 
     reveals.forEach(function (n, i) {
       var e = 1;
       if (anim) {
         var d = n.dataset;
-        var s = d.s ? +d.s : 0.95, sp = d.sp ? +d.sp : 0.45, o = d.o ? +d.o : 0;
-        e = ease(clamp((vh * s - (tops[i] - y)) / (vh * sp) - o));
+        e = ease(prog(tops[i], d.s ? +d.s : 0.95, d.sp ? +d.sp : 0.45, d.o ? +d.o : 0));
       }
       n.style.setProperty('--e', e.toFixed(3));
     });
@@ -297,10 +310,10 @@
       row.style.transform = 'translateX(' + (-p * pinT).toFixed(1) + 'px)';
     }
 
-    // palavras: as três passam em uma altura de tela enquanto o palco está fixo
+    // palavras: as três passam em 1,5 tela enquanto o palco está fixo (.kw = 250vh)
     if (anim) {
       var kTop = kw.getBoundingClientRect().top;
-      setWord(Math.min(2, Math.floor(clamp(-kTop / vh) * 3)));
+      setWord(Math.min(2, Math.floor(clamp(-kTop / (1.5 * vh)) * 3)));
     }
 
     // estrela decorativa da localização gira ao entrar
@@ -308,9 +321,10 @@
     visit.style.setProperty('--rot', ((1 - eV) * -30).toFixed(2) + 'deg');
 
     // marca d'água do rodapé sobe e a foto desliza dentro das letras
-    var eF = anim ? clamp((vh - footer.getBoundingClientRect().top) / (vh * 0.6)) : 1;
+    var eF = anim ? prog(footer.getBoundingClientRect().top + y, 1, 0.6, 0) : 1;
     wordmark.style.transform = 'translateY(' + ((1 - eF) * (mqDesk.matches ? 140 : 60)).toFixed(1) + 'px)';
-    wordmark.style.backgroundPosition = 'center ' + (15 + 70 * (1 - eF)).toFixed(1) + '%';
+    // a foto desliza de --wm-from até --wm-to (CSS)
+    wordmark.style.backgroundPosition = 'center ' + (wmTo + (wmFrom - wmTo) * (1 - eF)).toFixed(1) + '%';
 
     // barra de ação (mobile) aparece depois do hero
     actionbar.classList.toggle('show', state.intro >= 4 && hero.getBoundingClientRect().bottom < vh * 0.55);
