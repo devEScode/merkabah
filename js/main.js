@@ -297,10 +297,10 @@
       row.style.transform = 'translateX(' + (-p * pinT).toFixed(1) + 'px)';
     }
 
-    // palavras: uma por altura de tela enquanto o palco está fixo
+    // palavras: as três passam em uma altura de tela enquanto o palco está fixo
     if (anim) {
       var kTop = kw.getBoundingClientRect().top;
-      setWord(Math.min(2, Math.floor(clamp(-kTop / (2 * vh)) * 3)));
+      setWord(Math.min(2, Math.floor(clamp(-kTop / vh) * 3)));
     }
 
     // estrela decorativa da localização gira ao entrar
@@ -326,6 +326,12 @@
   mqDesk.addEventListener('change', function () { measure(); paintPhotos(); });
   mqCalm.addEventListener('change', function () { measure(); playIntro(); startHeroCycle(); });
   if (document.fonts) document.fonts.ready.then(measure);
+
+  // Reload sempre começa no hero (onde a intro acontece): sem restaurar a
+  // rolagem anterior e sem a âncora (#book, #planos…) que ficou na URL.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo(0, 0);
 
   playIntro();
   startHeroCycle();

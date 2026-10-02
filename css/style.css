@@ -142,6 +142,7 @@ ul, ol { list-style: none; padding: 0; }
 .hero {
   position: relative; overflow: hidden;
   margin-top: -64px; padding-top: 64px;
+  min-height: 100svh; display: flex; flex-direction: column; /* tablet em pé: ocupa a tela toda */
   background-color: var(--cream);
   transition: background-color 1.6s cubic-bezier(.4, 0, .2, 1);
 }
@@ -174,7 +175,7 @@ ul, ol { list-style: none; padding: 0; }
 .photos img.on { opacity: 1; }
 .i4 .arch img { transition: opacity 1.2s ease; }
 
-.hero-grid { position: relative; z-index: 2; padding: 28px var(--pad) 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+.hero-grid { position: relative; z-index: 2; flex-grow: 1; align-content: center; padding: 28px var(--pad) 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
 .hero-copy { color: var(--cream); }
 .hero-title { margin-top: 18px; font-size: 58px; line-height: .96; letter-spacing: -.02em; }
 .hero-title span { display: block; }
@@ -259,7 +260,7 @@ ul, ol { list-style: none; padding: 0; }
 .tagline { margin-top: 40px; text-align: center; font-size: 26px; line-height: 1.25; font-style: italic; color: var(--moss); }
 
 /* ================= KINETIC ================= */
-.kw { position: relative; height: 300vh; }
+.kw { position: relative; height: 200vh; }
 .kw-stage {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
   background-color: var(--moss); transition: background-color .9s ease;
