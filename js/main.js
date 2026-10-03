@@ -252,6 +252,8 @@
   var wordmark = $('wordmark');
   var hero = $('hero');
   var actionbar = $('actionbar');
+  // volta ao hero sem deixar #âncora na URL
+  $('to-top').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: motion() ? 'smooth' : 'auto' }); });
   var pinT = 0;
   var wmFrom = 85, wmTo = 15;
 

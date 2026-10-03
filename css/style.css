@@ -410,6 +410,7 @@ ul, ol { list-style: none; padding: 0; }
 .actionbar.show > div { opacity: 1; transform: none; pointer-events: auto; }
 .actionbar .btn { flex-grow: 1; font-size: 16px; }
 .actionbar .wa { width: 52px; height: 52px; flex-shrink: 0; border-radius: 50%; background: #2E4636; color: var(--cream); display: flex; align-items: center; justify-content: center; }
+.actionbar .top { border: 0; padding: 0; cursor: pointer; background: transparent; box-shadow: inset 0 0 0 1px #3D5A48; }
 
 /* ================================================================ */
 /* TABLET ≥ 640px                                                    */
